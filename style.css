@@ -8,6 +8,10 @@
     display: flex;
 }
 
+.d-none {
+    display: none;
+}
+
 .a-center {
     align-items: center;
 }
@@ -50,9 +54,13 @@
     display: flex;
 }
 
+.gameContainer p {
+    font-weight: bold;
+}
+
 .buildImg {
-    height: 200px;
-    width: 200px;
+    height: 150px;
+    width: 150px;
 }
 
 .buyContainer {
@@ -72,10 +80,15 @@
     height: 350px;
     background: #ffdebe;
     cursor: pointer;
+    gap: 1rem;
 }
 
 .purchaseCard:hover {
     background: #ffca92;
+}
+
+.purchaseCard > div {
+    pointer-events: none;
 }
 
 .costContainer {
