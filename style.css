@@ -52,6 +52,7 @@
 
 .gameContainer {
     display: flex;
+    height: 90vh;
 }
 
 .gameContainer p {
@@ -108,4 +109,11 @@
     background: #fff1b8;
     width: 100%;
     border-radius: 20px;
+}
+
+.ownedContainer {
+    padding: 20px;
+    overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
 }

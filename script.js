@@ -1,6 +1,7 @@
 "use strict";
 const resourcesContainer = document.querySelector(".resourcesContainer");
 const buyContainer = document.querySelector(".buyContainer");
+const ownedContainer = document.querySelector(".ownedContainer");
 const resources = [
     {
         resource: "GOLD",
@@ -158,16 +159,49 @@ const buildings = [
         }
     }
 ];
-resources.map(resource => {
-    resourcesContainer.innerHTML += `
+const bonusResources = {
+    gold: 0,
+    wood: 0,
+    stone: 0,
+    food: 0,
+    population: 0
+};
+let ownedBuildings = [];
+function appendResources() {
+    resourcesContainer.innerHTML = "";
+    resources.map(resource => {
+        resourcesContainer.innerHTML += `
     <div class="gold">
         <img src="${resource.img}" alt="" class="resourceImg">
         <p>${resource.resource}: <span>${resource.qty}</span></p>
     </div>
     `;
-});
-buildings.map((building, i) => {
-    buyContainer.innerHTML += `
+    });
+}
+function calculateCost(resources, cost) {
+    resources[0].qty = resources[0].qty - cost.gold;
+    resources[1].qty = resources[1].qty - cost.wood;
+    resources[2].qty = resources[2].qty - cost.stone;
+    resources[3].qty = resources[3].qty - cost.food;
+    resources[4].qty = resources[4].qty - cost.population;
+}
+function calculateProfit(resources, get) {
+    resources[0].qty = resources[0].qty + get.gold;
+    resources[1].qty = resources[1].qty + get.wood;
+    resources[2].qty = resources[2].qty + get.stone;
+    resources[3].qty = resources[3].qty + get.food;
+    resources[4].qty = resources[4].qty + get.population;
+}
+function calculateBonus(bonusResources, getPerSecond) {
+    bonusResources.gold = bonusResources.gold + getPerSecond.gold;
+    bonusResources.wood = bonusResources.wood + getPerSecond.wood;
+    bonusResources.stone = bonusResources.stone + getPerSecond.stone;
+    bonusResources.food = bonusResources.food + getPerSecond.food;
+    bonusResources.population = bonusResources.population + getPerSecond.population;
+}
+function appendBuildings() {
+    buildings.map((building, i) => {
+        buyContainer.innerHTML += `
     <div class="purchaseCard" id="${i}">
             <div class="costContainer">
                 <img src="${building.image}" alt="" class="buildImg">
@@ -251,4 +285,32 @@ buildings.map((building, i) => {
             </div>
     </div>
     `;
-});
+    });
+    const buildingCard = document.querySelectorAll(".purchaseCard");
+    buildingCard.forEach(buildingCard => {
+        // @ts-ignore
+        buildingCard.onclick = e => {
+            ownedContainer.innerHTML += `
+                 <img src="${buildings[e.target.id].image}" alt="" class="buildImg">
+            `;
+            ownedBuildings = [...ownedBuildings, buildings[e.target.id]];
+            const cost = buildings[e.target.id].cost;
+            const get = buildings[e.target.id].get;
+            const getPerSecond = buildings[e.target.id].getPerSecond;
+            calculateCost(resources, cost);
+            calculateProfit(resources, get);
+            calculateBonus(bonusResources, getPerSecond);
+            appendResources();
+        };
+    });
+}
+appendResources();
+appendBuildings();
+setInterval(function appendBonus() {
+    resources[0].qty = resources[0].qty + bonusResources.gold;
+    resources[1].qty = resources[1].qty + bonusResources.wood;
+    resources[2].qty = resources[2].qty + bonusResources.stone;
+    resources[3].qty = resources[3].qty + bonusResources.food;
+    resources[4].qty = resources[4].qty + bonusResources.population;
+    appendResources();
+}, 1000);

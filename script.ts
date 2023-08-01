@@ -3,7 +3,6 @@ type Resources = {
     qty: number,
     img: string
 }
-
 type Building = {
     building: string,
     image: string,
@@ -36,9 +35,18 @@ type Building = {
         population: string
     }
 }
+type BonusResources = {
+    gold: number,
+    wood: number,
+    stone: number,
+    food: number,
+    population: number
+}
 
 const resourcesContainer = document.querySelector(".resourcesContainer") as HTMLElement
 const buyContainer = document.querySelector(".buyContainer") as HTMLElement
+const ownedContainer = document.querySelector(".ownedContainer") as HTMLElement
+
 
 const resources: Resources[] = [
     {
@@ -67,7 +75,6 @@ const resources: Resources[] = [
         img: "https://png.pngtree.com/png-clipart/20221030/original/pngtree-maid-pixel-art-character-icon-design-png-image_8744095.png"
     }
 ]
-
 const buildings: Building[] = [
     {
         building: "Tent",
@@ -198,18 +205,55 @@ const buildings: Building[] = [
         }
     }
 ]
+const bonusResources: BonusResources = {
+    gold: 0,
+    wood: 0,
+    stone: 0,
+    food: 0,
+    population: 0
+}
+let ownedBuildings: Building[] = []
 
-resources.map(resource => {
-    resourcesContainer.innerHTML += `
+
+function appendResources() {
+    resourcesContainer.innerHTML = ""
+    resources.map(resource => {
+        resourcesContainer.innerHTML += `
     <div class="gold">
         <img src="${resource.img}" alt="" class="resourceImg">
         <p>${resource.resource}: <span>${resource.qty}</span></p>
     </div>
     `
-})
+    })
+}
 
-buildings.map((building, i)=> {
-    buyContainer.innerHTML += `
+function calculateCost(resources:Resources[], cost:BonusResources) {
+    resources[0].qty = resources[0].qty - cost.gold
+    resources[1].qty = resources[1].qty - cost.wood
+    resources[2].qty = resources[2].qty - cost.stone
+    resources[3].qty = resources[3].qty - cost.food
+    resources[4].qty = resources[4].qty - cost.population
+}
+
+function calculateProfit(resources:Resources[], get:BonusResources) {
+    resources[0].qty = resources[0].qty + get.gold
+    resources[1].qty = resources[1].qty + get.wood
+    resources[2].qty = resources[2].qty + get.stone
+    resources[3].qty = resources[3].qty + get.food
+    resources[4].qty = resources[4].qty + get.population
+}
+
+function calculateBonus(bonusResources:BonusResources, getPerSecond:BonusResources) {
+    bonusResources.gold = bonusResources.gold + getPerSecond.gold
+    bonusResources.wood = bonusResources.wood + getPerSecond.wood
+    bonusResources.stone = bonusResources.stone + getPerSecond.stone
+    bonusResources.food = bonusResources.food + getPerSecond.food
+    bonusResources.population = bonusResources.population + getPerSecond.population
+}
+
+function appendBuildings() {
+    buildings.map((building, i)=> {
+        buyContainer.innerHTML += `
     <div class="purchaseCard" id="${i}">
             <div class="costContainer">
                 <img src="${building.image}" alt="" class="buildImg">
@@ -293,6 +337,41 @@ buildings.map((building, i)=> {
             </div>
     </div>
     `
-})
+
+    })
+
+    const buildingCard = document.querySelectorAll(".purchaseCard")
+
+    buildingCard.forEach(buildingCard => {
+        // @ts-ignore
+        buildingCard.onclick = e => {
+            ownedContainer.innerHTML += `
+                 <img src="${buildings[e.target.id].image}" alt="" class="buildImg">
+            `
+
+            ownedBuildings = [...ownedBuildings, buildings[e.target.id]]
+
+            const cost: BonusResources = buildings[e.target.id].cost
+            const get: BonusResources = buildings[e.target.id].get
+            const getPerSecond: BonusResources = buildings[e.target.id].getPerSecond
+
+            calculateCost(resources, cost)
+            calculateProfit(resources, get)
+            calculateBonus(bonusResources, getPerSecond)
+            appendResources()
+        }
 
 
+    })
+}
+
+appendResources()
+appendBuildings()
+setInterval(function appendBonus() {
+    resources[0].qty = resources[0].qty + bonusResources.gold
+    resources[1].qty = resources[1].qty + bonusResources.wood
+    resources[2].qty = resources[2].qty + bonusResources.stone
+    resources[3].qty = resources[3].qty + bonusResources.food
+    resources[4].qty = resources[4].qty + bonusResources.population
+    appendResources()
+}, 1000)
