@@ -117,3 +117,9 @@
     display: flex;
     flex-wrap: wrap;
 }
+
+.bgGray {
+    background: #212121;
+    pointer-events: none;
+    border: none;
+}

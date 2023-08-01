@@ -60,7 +60,9 @@ const buildings = [
             stone: "https://static.vecteezy.com/system/resources/previews/019/527/056/original/an-8-bit-retro-styled-pixel-art-illustration-of-a-stone-rock-free-png.png",
             food: "https://art.pixilart.com/9303f679e92050a.png",
             population: "https://png.pngtree.com/png-clipart/20221030/original/pngtree-maid-pixel-art-character-icon-design-png-image_8744095.png"
-        }
+        },
+        isAvailable: false,
+        requirementsMet: true
     },
     {
         building: "Hunter Hut",
@@ -92,7 +94,9 @@ const buildings = [
             stone: "https://static.vecteezy.com/system/resources/previews/019/527/056/original/an-8-bit-retro-styled-pixel-art-illustration-of-a-stone-rock-free-png.png",
             food: "https://art.pixilart.com/9303f679e92050a.png",
             population: "https://png.pngtree.com/png-clipart/20221030/original/pngtree-maid-pixel-art-character-icon-design-png-image_8744095.png"
-        }
+        },
+        isAvailable: false,
+        requirementsMet: false
     },
     {
         building: "House",
@@ -124,7 +128,9 @@ const buildings = [
             stone: "https://static.vecteezy.com/system/resources/previews/019/527/056/original/an-8-bit-retro-styled-pixel-art-illustration-of-a-stone-rock-free-png.png",
             food: "https://art.pixilart.com/9303f679e92050a.png",
             population: "https://png.pngtree.com/png-clipart/20221030/original/pngtree-maid-pixel-art-character-icon-design-png-image_8744095.png"
-        }
+        },
+        isAvailable: false,
+        requirementsMet: false
     },
     {
         building: "City Hall",
@@ -156,7 +162,9 @@ const buildings = [
             stone: "https://static.vecteezy.com/system/resources/previews/019/527/056/original/an-8-bit-retro-styled-pixel-art-illustration-of-a-stone-rock-free-png.png",
             food: "https://art.pixilart.com/9303f679e92050a.png",
             population: "https://png.pngtree.com/png-clipart/20221030/original/pngtree-maid-pixel-art-character-icon-design-png-image_8744095.png"
-        }
+        },
+        isAvailable: false,
+        requirementsMet: false
     }
 ];
 const bonusResources = {
@@ -179,30 +187,59 @@ function appendResources() {
     });
 }
 function calculateCost(resources, cost) {
-    resources[0].qty = resources[0].qty - cost.gold;
-    resources[1].qty = resources[1].qty - cost.wood;
-    resources[2].qty = resources[2].qty - cost.stone;
-    resources[3].qty = resources[3].qty - cost.food;
-    resources[4].qty = resources[4].qty - cost.population;
+    resources[0].qty -= cost.gold;
+    resources[1].qty -= cost.wood;
+    resources[2].qty -= cost.stone;
+    resources[3].qty -= cost.food;
+    resources[4].qty -= cost.population;
 }
 function calculateProfit(resources, get) {
-    resources[0].qty = resources[0].qty + get.gold;
-    resources[1].qty = resources[1].qty + get.wood;
-    resources[2].qty = resources[2].qty + get.stone;
-    resources[3].qty = resources[3].qty + get.food;
-    resources[4].qty = resources[4].qty + get.population;
+    resources[0].qty += get.gold;
+    resources[1].qty += get.wood;
+    resources[2].qty += get.stone;
+    resources[3].qty += get.food;
+    resources[4].qty += get.population;
 }
 function calculateBonus(bonusResources, getPerSecond) {
-    bonusResources.gold = bonusResources.gold + getPerSecond.gold;
-    bonusResources.wood = bonusResources.wood + getPerSecond.wood;
-    bonusResources.stone = bonusResources.stone + getPerSecond.stone;
-    bonusResources.food = bonusResources.food + getPerSecond.food;
-    bonusResources.population = bonusResources.population + getPerSecond.population;
+    bonusResources.gold += getPerSecond.gold;
+    bonusResources.wood += getPerSecond.wood;
+    bonusResources.stone += getPerSecond.stone;
+    bonusResources.food += getPerSecond.food;
+    bonusResources.population += getPerSecond.population;
+}
+function checkAvailability() {
+    buildings.map(building => {
+        if (building.cost.gold <= resources[0].qty &&
+            building.cost.wood <= resources[1].qty &&
+            building.cost.stone <= resources[2].qty &&
+            building.cost.food <= resources[3].qty &&
+            building.cost.population <= resources[4].qty) {
+            building.isAvailable = true;
+            appendBuildings();
+        }
+        else {
+            building.isAvailable = false;
+            appendBuildings();
+        }
+    });
+    let tents = ownedBuildings.filter(building => building.building === "Tent");
+    let huts = ownedBuildings.filter(building => building.building === "Hunter Hut");
+    let houses = ownedBuildings.filter(building => building.building === "House");
+    if (tents.length > 0) {
+        buildings[1].requirementsMet = true;
+    }
+    if (tents.length > 0 && huts.length > 0) {
+        buildings[2].requirementsMet = true;
+    }
+    if (tents.length > 2 && huts.length > 3 && houses.length > 4) {
+        buildings[3].requirementsMet = true;
+    }
 }
 function appendBuildings() {
+    buyContainer.innerHTML = "";
     buildings.map((building, i) => {
         buyContainer.innerHTML += `
-    <div class="purchaseCard" id="${i}">
+    <div class="purchaseCard ${building.isAvailable && building.requirementsMet ? "" : "bgGray"}" id="${i}">
             <div class="costContainer">
                 <img src="${building.image}" alt="" class="buildImg">
                 <div class="d-flex a-center gap1 ${building.cost.gold === 0 ? "d-none" : ""}">
@@ -231,7 +268,7 @@ function appendBuildings() {
                 </div>
             </div>
 
-            <div class="getContainer">
+            <div class="getContainer ${building.isAvailable && building.requirementsMet ? "" : "bgGray"}">
                 <div class="d-flex a-center gap1 ${building.get.gold === 0 ? "d-none" : ""}">
                     <p>${building.get.gold}</p>
                     <img src="${building.resourceImages.gold}" alt="" class="resourceImg">
@@ -307,10 +344,11 @@ function appendBuildings() {
 appendResources();
 appendBuildings();
 setInterval(function appendBonus() {
-    resources[0].qty = resources[0].qty + bonusResources.gold;
-    resources[1].qty = resources[1].qty + bonusResources.wood;
-    resources[2].qty = resources[2].qty + bonusResources.stone;
-    resources[3].qty = resources[3].qty + bonusResources.food;
-    resources[4].qty = resources[4].qty + bonusResources.population;
+    resources[0].qty += bonusResources.gold;
+    resources[1].qty += bonusResources.wood;
+    resources[2].qty += bonusResources.stone;
+    resources[3].qty += bonusResources.food;
+    resources[4].qty += bonusResources.population;
     appendResources();
+    checkAvailability();
 }, 1000);
