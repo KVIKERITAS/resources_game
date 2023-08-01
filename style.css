@@ -1,0 +1,98 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.a-center {
+    align-items: center;
+}
+
+.flex1 {
+    flex: 1;
+}
+
+.gap1 {
+    gap: 1rem;
+}
+
+.resourcesContainer {
+    padding: 10px;
+    border-bottom: 1px solid black;
+    display: flex;
+    gap: 2rem;
+    background: #eaeaea;
+}
+
+.resourceImg {
+    height: 30px;
+    width: 30px;
+}
+
+.resourcesContainer p {
+    font-weight: bold;
+}
+
+.gold,
+.wood,
+.stone,
+.food,
+.population{
+    display: flex;
+    align-items: center;
+}
+
+.gameContainer {
+    display: flex;
+}
+
+.buildImg {
+    height: 200px;
+    width: 200px;
+}
+
+.buyContainer {
+    padding: 20px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.purchaseCard {
+    border: 1px solid #9f6a45;
+    border-radius: 20px;
+    padding: 10px;
+    display: flex;
+    width: 400px;
+    height: 350px;
+    background: #ffdebe;
+    cursor: pointer;
+}
+
+.purchaseCard:hover {
+    background: #ffca92;
+}
+
+.costContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.getContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #9f6a45;
+    padding: 1rem;
+    background: #fff1b8;
+    width: 100%;
+    border-radius: 20px;
+}
