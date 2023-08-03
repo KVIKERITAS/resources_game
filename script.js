@@ -235,6 +235,11 @@ function checkAvailability() {
         buildings[3].requirementsMet = true;
     }
 }
+function disableClick(cards) {
+    cards.forEach(card => {
+        card.style.pointerEvents = "none";
+    });
+}
 function appendBuildings() {
     buyContainer.innerHTML = "";
     buildings.map((building, i) => {
@@ -320,13 +325,50 @@ function appendBuildings() {
                     <img src="${building.resourceImages.population}" alt="" class="resourceImg">
                 </div>
             </div>
+            
+            <div class="${building.building === "Hunter Hut" && !building.requirementsMet ? "d-flex requirements" : "d-none"}">
+                <p>Required:</p>
+                    <div>
+                        <p>1x</p>
+                        <img src="${buildings[0].image}" alt="">
+                    </div>
+                </div>
+                
+            <div class="${building.building === "House" && !building.requirementsMet ? "d-flex requirements" : "d-none"}">
+                <p>Required:</p>
+                    <div>
+                        <p>1x</p>
+                        <img src="${buildings[0].image}" alt="">
+                    </div>
+                    <div>
+                        <p>1x</p>
+                        <img src="${buildings[1].image}" alt="">
+                    </div>
+            </div>
+                
+            <div class="${building.building === "City Hall" && !building.requirementsMet ? "d-flex requirements" : "d-none"}">
+                <p>Required:</p>
+                    <div>
+                        <p>3x</p>
+                        <img src="${buildings[0].image}" alt="">
+                    </div>
+                    <div>
+                        <p>4x</p>
+                        <img src="${buildings[1].image}" alt="">
+                    </div>
+                    <div>
+                        <p>5x</p>
+                        <img src="${buildings[2].image}" alt="">
+                    </div>
+            </div>
+            
+            </div>            
     </div>
     `;
     });
-    const buildingCard = document.querySelectorAll(".purchaseCard");
-    buildingCard.forEach(buildingCard => {
-        // @ts-ignore
-        buildingCard.onclick = e => {
+    const buildingCards = document.querySelectorAll(".purchaseCard");
+    buildingCards.forEach((buildingCard) => {
+        buildingCard.onclick = (e) => {
             ownedContainer.innerHTML += `
                  <img src="${buildings[e.target.id].image}" alt="" class="buildImg">
             `;
@@ -334,6 +376,7 @@ function appendBuildings() {
             const cost = buildings[e.target.id].cost;
             const get = buildings[e.target.id].get;
             const getPerSecond = buildings[e.target.id].getPerSecond;
+            disableClick(buildingCards);
             calculateCost(resources, cost);
             calculateProfit(resources, get);
             calculateBonus(bonusResources, getPerSecond);

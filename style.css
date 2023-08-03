@@ -123,3 +123,22 @@
     pointer-events: none;
     border: none;
 }
+
+.requirements {
+    flex-direction: column;
+    background: #444a52;
+    padding: 10px;
+    border-radius: 1rem;
+    gap: 10px;
+}
+
+.requirements img {
+    height: 50px;
+    width: 50px;
+}
+
+.requirements div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

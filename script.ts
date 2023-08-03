@@ -223,6 +223,7 @@ const bonusResources: BonusResources = {
 }
 let ownedBuildings: Building[] = []
 
+
 function appendResources() {
     resourcesContainer.innerHTML = ""
     resources.map(resource => {
@@ -291,6 +292,12 @@ function checkAvailability() {
     if (tents.length > 2 && huts.length > 3 && houses.length > 4) {
         buildings[3].requirementsMet = true
     }
+}
+
+function disableClick(cards: NodeListOf<HTMLElement>) {
+    cards.forEach(card => {
+        card.style.pointerEvents = "none"
+    })
 }
 
 function appendBuildings() {
@@ -379,25 +386,63 @@ function appendBuildings() {
                     <img src="${building.resourceImages.population}" alt="" class="resourceImg">
                 </div>
             </div>
+            
+            <div class="${building.building === "Hunter Hut" && !building.requirementsMet ? "d-flex requirements" : "d-none"}">
+                <p>Required:</p>
+                    <div>
+                        <p>1x</p>
+                        <img src="${buildings[0].image}" alt="">
+                    </div>
+                </div>
+                
+            <div class="${building.building === "House" && !building.requirementsMet ? "d-flex requirements" : "d-none"}">
+                <p>Required:</p>
+                    <div>
+                        <p>1x</p>
+                        <img src="${buildings[0].image}" alt="">
+                    </div>
+                    <div>
+                        <p>1x</p>
+                        <img src="${buildings[1].image}" alt="">
+                    </div>
+            </div>
+                
+            <div class="${building.building === "City Hall" && !building.requirementsMet ? "d-flex requirements" : "d-none"}">
+                <p>Required:</p>
+                    <div>
+                        <p>3x</p>
+                        <img src="${buildings[0].image}" alt="">
+                    </div>
+                    <div>
+                        <p>4x</p>
+                        <img src="${buildings[1].image}" alt="">
+                    </div>
+                    <div>
+                        <p>5x</p>
+                        <img src="${buildings[2].image}" alt="">
+                    </div>
+            </div>
+            
+            </div>            
     </div>
     `
-
     })
 
-    const buildingCard = document.querySelectorAll(".purchaseCard")
+    const buildingCards = document.querySelectorAll(".purchaseCard") as NodeListOf<HTMLElement>
 
-    buildingCard.forEach(buildingCard => {
-        // @ts-ignore
-        buildingCard.onclick = e => {
+    buildingCards.forEach((buildingCard: HTMLElement )=> {
+        buildingCard.onclick = (e:any) => {
+
             ownedContainer.innerHTML += `
                  <img src="${buildings[e.target.id].image}" alt="" class="buildImg">
             `
-
             ownedBuildings = [...ownedBuildings, buildings[e.target.id]]
 
             const cost: BonusResources = buildings[e.target.id].cost
             const get: BonusResources = buildings[e.target.id].get
             const getPerSecond: BonusResources = buildings[e.target.id].getPerSecond
+
+            disableClick(buildingCards)
 
             calculateCost(resources, cost)
             calculateProfit(resources, get)
